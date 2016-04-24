@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="moduleVersion">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.vo.ModuleVersion">
+		<result column="id" property="id" />
+		<result column="module_id" property="module_id" />
+		<result column="version" property="version" />
+		<result column="status" property="status" />
+		<result column="qb_job_url" property="qb_job_url" />
+		<result column="operator" property="operator" />
+		<result column="release_type" property="release_type" />
+		<result column="release_date" property="release_date" />
+		<result column="checkout_command" property="checkout_command" />
+		<result column="pipeline_case_id" property="pipeline_case_id" />
+		<result column="jenkins_job_url" property="jenkins_job_url" />
+		<result column="code_tag" property="code_tag" />
+		<result column="code_revision" property="code_revision" />
+		<result column="release_req_num" property="release_req_num" />
+		<result column="release_note" property="release_note" />
+		<result column="code_change_lines" property="code_change_lines" />
+		<result column="stable_version" property="stable_version" />
+		<result column="is_tag" property="is_tag" />
+		
+</resultMap>
+
+<sql id="Base_Column_List">
+
+id,module_id,version,status,qb_job_url,operator,release_type,release_date,checkout_command,pipeline_case_id,jenkins_job_url,code_tag,code_revision,release_req_num,release_note,code_change_lines,stable_version,is_tag
+
+</sql>
+
+
+<insert id="insert" parameterClass="com.sina.scm.data.vo.ModuleVersion">
+		insert
+		into
+		module_version(id,module_id,qb_job_url,version,status,release_type,release_date,operator,checkout_command,is_tag)
+		values
+		(#id#,#module_id#,#qb_job_url#,#version#,#status#,#release_type#,#release_date#,#operator#,#checkout_command#,#is_tag#)
+		<selectKey resultClass="java.lang.Integer">
+			select last_insert_id() as id
+		</selectKey>
+</insert>
+
+<select id="getVersionNum" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+
+select count(version) from module_version where version = #version#
+
+</select>
+
+<select id="getVersionNum1" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+
+select count(version) from module_version where version = #version# and module_id = #module_id#
+
+</select>
+
+<update id="updateModuleVersionByVersionAndModuleId" parameterClass="java.util.Map">
+
+update scm_platform.module_version set 
+qb_job_url=#qb_job_url#,
+release_type=#release_type#,
+release_date=#release_date#,
+operator=#operator#,
+is_tag = null
+where version = #version# and module_id=#module_id#
+
+</update>
+
+<select id="getVersionByModuleId" parameterClass="java.lang.Integer" resultClass="java.lang.String">
+
+select version from module_version where module_id = #module_id# order by release_date desc limit 1
+
+
+</select>
+
+<select id="getVersionByModuleId1" parameterClass="java.lang.Integer" resultClass="java.lang.String">
+
+select version from module_version where module_id = #module_id# order by release_date desc limit 1,1
+
+
+</select>
+
+<select id="getHistoryVersionByModuleId" parameterClass="java.lang.Integer" resultClass="java.lang.String">
+
+select version from module_version where module_id = #module_id#  and is_tag is null order by release_date desc
+
+</select>
+
+<select id="getModuleIdAndCount" parameterClass="java.util.Map" resultClass="java.util.Map">
+
+<![CDATA[
+select module_id,count(module_id) from module_version
+where release_date >='#start#' and release_date <= '#end#' 
+group by module_id
+]]>
+
+</select>
+
+<select id="getAllModuleIds" resultClass="java.lang.Integer">
+
+select distinct(module_id) from module_version
+
+</select>
+
+<select id="getAllModuleId" resultClass="java.lang.Integer" parameterClass="java.util.Map">
+
+select distinct(module_id) from module_version order by release_date desc limit #start#,#end#
+
+</select>
+
+
+<select id="getModuleVersionByToVersion" parameterClass="java.util.Map" resultClass="com.sina.scm.data.vo.ModuleVersion">
+
+select
+<include refid="Base_Column_List" />
+from module_version
+where version = #version# and module_id = #module_id# and is_tag is null
+
+</select>
+
+<select id="releaseAndRollBackNum" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+
+select count(*) from module_version where release_date like  concat (#year#, '%') and is_tag is null
+
+</select>
+
+<select id="releaseAndRollBackNumBymoduleId" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+
+select count(*) from module_version where release_date like  concat (#release_date#, '%') and module_id = #module_id# and is_tag is null
+
+</select>
+
+
+</sqlMap>

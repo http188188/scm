@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="user">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.vo.User">
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="mail" property="mail" />
+		<result column="group_id" property="group_id" />
+		<result column="status" property="status" />
+		<result column="telephone" property="telephone" />
+		<result column="location" property="location" />
+		<result column="extension_number" property="extension_number" />
+		
+</resultMap>
+
+<sql id="Base_Column_List">
+id,name,mail,group_id,status,telephone,location,extension_number
+</sql>
+
+<select id="getUserByGroupId" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from scm_platform.user
+where group_id = #group_id#
+
+</select>
+
+<select id="getAllGroupByName" parameterClass="java.lang.String" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from scm_platform.user
+where name = #name#
+
+</select>
+
+<select id="getSCMMenu" resultClass="com.sina.scm.data.vo.Menu">
+
+select
+id,name,url,icon,permission
+from scm_platform.menu
+
+</select>
+
+<select id="getNoSCMMenu" resultClass="com.sina.scm.data.vo.Menu">
+
+select
+id,name,url,icon,permission
+from scm_platform.menu
+where permission = '1'
+
+</select>
+
+<insert id="insert" parameterClass="com.sina.scm.data.vo.User">
+		insert
+		into
+		user(id,name,mail,group_id,status)
+		values(#id#,#name#,#mail#,#group_id#,#status#)
+		<selectKey resultClass="java.lang.Integer">
+			select last_insert_id() as id
+		</selectKey>
+</insert>
+
+<delete id="deleteUserToGroup" parameterClass="java.util.Map">
+
+delete from user where name =#name# and group_id=#group_id#
+
+
+</delete>
+
+<delete id="deleteUserFromGroup" parameterClass="java.lang.Integer">
+
+delete from user where  group_id=#group_id#
+
+
+</delete>
+
+</sqlMap>

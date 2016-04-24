@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="nodeCase">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.DO.NodeCase">
+		<result column="id" property="id" />
+		<result column="node_def_id" property="node_def_id" />
+		<result column="pipeline_case_id" property="pipeline_case_id" />
+		<result column="job_url" property="job_url" />
+		<result column="parameter" property="parameter" />
+		<result column="start_time" property="start_time" />
+		<result column="dev_test_result" property="dev_test_result" />
+		<result column="dev_tester" property="dev_tester" />
+		<result column="qa_test_result" property="qa_test_result" />
+		<result column="qa_tester" property="qa_tester" />
+		<result column="urgent_approver" property="urgent_approver" />
+		<result column="urgent_approve_result" property="urgent_approve_result" />
+		<result column="status" property="status" />
+		<result column="job_log_url" property="job_log_url" />
+		<result column="qa_test_time" property="qa_test_time" />
+		<result column="dev_test_time" property="dev_test_time" />
+		<result column="approve_time" property="approve_time" />
+		<result column="end_time" property="end_time" />
+		<result column="name" property="name" />
+		<result column="type" property="type" />
+		<result column="notification_mail_list" property="notification_mail_list" />
+		<result column="preview_test_result_url" property="preview_test_result_url" />
+</resultMap>
+
+<sql id="Base_Column_List">
+
+id,node_def_id,pipeline_case_id,job_url,parameter,start_time,dev_test_result,dev_tester,
+qa_test_result,qa_tester,urgent_approver,urgent_approve_result,status,job_log_url,
+qa_test_time,dev_test_time,approve_time,end_time,name,type,notification_mail_list,preview_test_result_url
+
+</sql>
+
+<insert id="insert" parameterClass="com.sina.scm.data.DO.NodeCase">
+		insert
+		into
+		node_case(id,node_def_id,pipeline_case_id,job_url,parameter,start_time,dev_test_result,dev_tester,
+                  qa_test_result,qa_tester,urgent_approver,urgent_approve_result,status,job_log_url,
+                  qa_test_time,dev_test_time,approve_time,end_time,name,type,notification_mail_list,preview_test_result_url)
+		values(#id#,#node_def_id#,#pipeline_case_id#,#job_url#,#parameter#,#start_time#,#dev_test_result#,#dev_tester#,
+               #qa_test_result#,#qa_tester#,#urgent_approver#,#urgent_approve_result#,#status#,#job_log_url#,
+               #qa_test_time#,#dev_test_time#,#approve_time#,#end_time#,#name#,#type#,#notification_mail_list#,#preview_test_result_url#)
+		<selectKey resultClass="java.lang.Integer">
+			select last_insert_id() as id
+		</selectKey>
+</insert>
+
+<update id="updateParameterById" parameterClass="java.util.Map">
+
+update node_case set parameter = #parameter# where id = #id#
+
+</update>
+
+<update id="updateNodeCase" parameterClass="com.sina.scm.data.DO.NodeCase">
+update
+node_case
+set
+status = #status#,end_time=#end_time#
+where 
+id = #id#
+</update>
+
+<update id="updateNodeCaseByID" parameterClass="com.sina.scm.data.DO.NodeCase">
+update
+node_case
+set
+status = #status#,job_url=#job_url#,job_log_url=#job_log_url#,start_time=#start_time#
+where 
+id = #id#
+</update>
+
+<update id="updateNodeCaseById" parameterClass="java.util.Map">
+
+
+update node_case set job_url=#JobUrl#, job_log_url = #JobLogUrl#, start_time=#BeginTime#, status='on-going'
+where id = #NodeCaseId#
+
+</update>
+
+<select id="getNodeCaseById" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from node_case
+where id = #nodeCaseId#
+
+</select>
+
+<select id="getNodeCases" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from node_case
+where pipeline_case_id = #pipeline_case_id#
+
+</select>
+
+<update id="update_preview_test_result_urlById" parameterClass="java.util.Map">
+
+update node_case set preview_test_result_url = #preview_test_result_url# where id = #id#
+
+</update>
+
+
+</sqlMap>

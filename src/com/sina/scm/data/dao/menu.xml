@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="menu">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.vo.Menu">
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="url" property="url" />
+		<result column="icon" property="icon" />
+		<result column="permission" property="permission" />
+</resultMap>
+
+<sql id="Base_Column_List">
+id,name,url,icon,permission
+</sql>
+
+</sqlMap>

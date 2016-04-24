@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="deployTypePlatform">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.DO.DeployTypePlatform">
+		<result column="id" property="id" />
+		<result column="deploy_type" property="deploy_type" />
+		<result column="name" property="name" />
+		<result column="status" property="status" />		
+</resultMap>
+
+<sql id="Base_Column_List">
+
+id,deploy_type,name,status
+		
+</sql>
+
+<select id="getAllReleaseType" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from deploy_type_platform
+where status = 'online'
+
+</select>
+
+</sqlMap>

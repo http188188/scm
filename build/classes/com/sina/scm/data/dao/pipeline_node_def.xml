@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="piplineNodeDef">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.DO.PiplineNodeDef">
+		<result column="id" property="id" />
+		<result column="pipeline_def_id" property="pipeline_def_id" />
+		<result column="node_def_id" property="node_def_id" />
+		<result column="node_pass" property="node_pass" />
+		<result column="next_id_on_success" property="next_id_on_success" />
+		<result column="next_id_on_fail" property="next_id_on_fail" />
+		<result column="mail_list" property="mail_list" />
+		<result column="auto_test_pass_rate" property="auto_test_pass_rate" />
+		<result column="test_type" property="test_type" />
+		<result column="node_test_rule" property="node_test_rule" />
+		<result column="autotest_url" property="autotest_url" />
+		<result column="notification_mail" property="notification_mail" />
+		<result column="start_next_node" property="start_next_node" />
+</resultMap>
+
+<sql id="Base_Column_List">
+
+id,pipeline_def_id,node_def_id,node_pass,next_id_on_success,next_id_on_fail,mail_list,auto_test_pass_rate,
+test_type,node_test_rule,autotest_url,notification_mail,start_next_node
+
+</sql>
+
+<insert id="insert" parameterClass="com.sina.scm.data.DO.PiplineNodeDef">
+		insert
+		into
+		pipeline_node_def(id,pipeline_def_id,node_def_id,node_pass,next_id_on_success,next_id_on_fail,mail_list,auto_test_pass_rate,
+test_type,node_test_rule,autotest_url,notification_mail,start_next_node)
+		values(#id#,#pipeline_def_id#,#node_def_id#,#node_pass#,#next_id_on_success#,#next_id_on_fail#,#mail_list#,#auto_test_pass_rate#,
+#test_type#,#node_test_rule#,#autotest_url#,#notification_mail#,#start_next_node#)
+		<selectKey resultClass="java.lang.Integer">
+			select last_insert_id() as id
+		</selectKey>
+</insert>
+
+<select id="getExcuteNodeByPiplineDefId" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_node_def
+where pipeline_def_id = #piplineDefId#
+
+</select>
+
+<select id="getNodeByNodeDefId" parameterClass="java.util.Map" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_node_def
+where node_def_id = #node_def_id# and pipeline_def_id = #pipeline_def_id#
+
+</select>
+
+<update id="update" parameterClass="java.util.Map">
+
+update pipeline_node_def set next_id_on_success = #next_id_on_success#
+where id = #id#
+
+</update>
+
+</sqlMap>

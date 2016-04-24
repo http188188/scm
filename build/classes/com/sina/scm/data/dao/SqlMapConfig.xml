@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>	
+
+    <properties resource="com/sina/scm/data/dao/jdbc.properties"/>
+	<settings 
+	    cacheModelsEnabled="true" 
+	    enhancementEnabled="true"
+		lazyLoadingEnabled="true"
+		errorTracingEnabled ="true"
+		maxRequests="128" 
+		maxSessions="50"
+		maxTransactions="10" 
+		useStatementNamespaces="true"
+	/>	
+	
+	<transactionManager type="JDBC">
+		<dataSource type="SIMPLE">
+			<property name="JDBC.Driver" value="${driver}" />
+			<property name="JDBC.ConnectionURL" value="${url}" />
+			<property name="JDBC.Username" value="${username}" />
+			<property name="JDBC.Password" value="${password}" />
+			<property name="JDBC.DefaultAutoCommit" value="true" />
+			<property name="Pool.MaximumActiveConnections" value="100" />
+			<property name="Pool.MaximumIdleConnections" value="20" />
+			<property name="Pool.MaximumCheckoutTime" value="120000" />
+			<property name="Pool.TimeToWait" value="500"/>
+			<!-- only to keep the connection active -->
+			<property name="Pool.PingQuery" value="select 1 from rca" />
+			<property name="Pool.PingEnabled" value="true" />
+			<property name="Pool.PingConnectionsOlderThan" value="60000" />
+			<property name="Pool.PingConnectionsNotUsedFor" value="60000" />		
+		</dataSource>
+	</transactionManager>
+		
+	<sqlMap resource="com/sina/scm/data/dao/module.xml" />
+	<sqlMap resource="com/sina/scm/data/dao/moduleVersion.xml" />
+	<sqlMap resource="com/sina/scm/data/dao/rollback.xml" />	
+	<sqlMap resource="com/sina/scm/data/dao/pipeline_def.xml" />	
+	<sqlMap resource="com/sina/scm/data/dao/node_def.xml" />
+	<sqlMap resource="com/sina/scm/data/dao/pipeline_case.xml" />
+	<sqlMap resource="com/sina/scm/data/dao/deploy_type_platform.xml" />
+	<sqlMap resource="com/sina/scm/data/dao/node_case.xml" />	
+	<sqlMap resource="com/sina/scm/data/dao/pipeline_node_def.xml" />
+	<sqlMap resource="com/sina/scm/data/dao/release_type.xml" />
+	<sqlMap resource="com/sina/scm/data/dao/group.xml" />	
+	<sqlMap resource="com/sina/scm/data/dao/user.xml" />	
+	<sqlMap resource="com/sina/scm/data/dao/menu.xml" />
+	<sqlMap resource="com/sina/scm/data/dao/scm_info.xml" />
+	<sqlMap resource="com/sina/scm/data/dao/template.xml" />
+	
+	
+</sqlMapConfig>

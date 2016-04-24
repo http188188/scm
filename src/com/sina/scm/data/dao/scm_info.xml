@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="scm_info">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.vo.Scm_info">
+		<result column="id" property="id" />
+		<result column="tool_type" property="tool_type" />
+		<result column="code_url" property="code_url" />
+		<result column="tag_url" property="tag_url" />
+		<result column="branch" property="branch" />
+		<result column="module_id" property="module_id" />
+		<result column="status" property="status" />
+</resultMap>
+
+<sql id="Base_Column_List">
+id,tool_type,code_url,tag_url,branch,module_id,status
+</sql>
+
+<insert id="insert" parameterClass="com.sina.scm.data.vo.Scm_info">
+		insert
+		into
+		scm_info(id,tool_type,code_url,tag_url,branch,module_id,status)
+		values(#id#,#tool_type#,#code_url#,#tag_url#,#branch#,#module_id#,#status#)
+		<selectKey resultClass="java.lang.Integer">
+			select last_insert_id() as id
+		</selectKey>
+</insert>
+
+<update id="updateSCM" parameterClass="com.sina.scm.data.vo.Scm_info">
+update
+scm_info
+set
+tool_type = #tool_type#,
+code_url  = #code_url#,
+tag_url = #tag_url#
+where 
+module_id = #module_id#
+</update>
+
+<select id="getModuleTypeAndUrlById" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+select
+*
+from scm_info
+where 
+module_id = #module_id#
+</select>
+
+<select id="getModuleIdByCodeUrl" parameterClass="java.lang.String" resultMap="BaseResultMap">
+select
+*
+from scm_info
+where 
+code_url = #code_url#
+</select>
+
+
+
+
+</sqlMap>

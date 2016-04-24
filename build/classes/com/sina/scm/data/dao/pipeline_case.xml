@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="piplineCase">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.DO.PiplineCase">
+		<result column="id" property="id" />
+		<result column="pipeline_def_id" property="pipeline_def_id" />
+		<result column="module_id" property="module_id" />
+		<result column="status" property="status" />
+		<result column="release_package_url" property="release_package_url" />
+		<result column="rollback_package_url" property="rollback_package_url" />
+		<result column="release_note" property="release_note" />
+		<result column="operator" property="operator" />
+		<result column="start_time" property="start_time" />
+		<result column="end_time" property="end_time" />
+		<result column="pipeline_case_json" property="pipeline_case_json" />
+		<result column="deploy_type1" property="deploy_type1" />
+		<result column="version" property="version" />
+		<result column="preview_iplist" property="preview_iplist" />
+		<result column="is_release_version" property="is_release_version" />
+		<result column="rollBackVersion" property="rollBackVersion" />
+</resultMap>
+
+<sql id="Base_Column_List">
+
+id,pipeline_def_id,module_id,status,release_package_url,rollback_package_url,release_note,
+operator,start_time,end_time,pipeline_case_json,deploy_type1,version,preview_iplist,is_release_version,rollBackVersion
+
+</sql>
+
+<insert id="insert" parameterClass="com.sina.scm.data.DO.PiplineCase">
+		insert
+		into
+		pipeline_case(id,pipeline_def_id,module_id,status,release_package_url,rollback_package_url,release_note,
+operator,start_time,end_time,pipeline_case_json,deploy_type1,version,preview_iplist,is_release_version,rollBackVersion)
+		values(#id#,#pipeline_def_id#,#module_id#,#status#,#release_package_url#,#rollback_package_url#,#release_note#,
+#operator#,#start_time#,#end_time#,#pipeline_case_json#,#deploy_type1#,#version#,#preview_iplist#,#is_release_version#,#rollBackVersion#)
+		<selectKey resultClass="java.lang.Integer">
+			select last_insert_id() as id
+		</selectKey>
+</insert>
+
+<update id="updatePiplineCaseJsonById" parameterClass="java.util.Map">
+
+update pipeline_case set pipeline_case_json = #pipeline_case_json# where id = #id#
+
+</update>
+
+<select id="getCountByPiplineDefIdInPcase" parameterClass="java.lang.Integer" resultClass="java.lang.Integer">
+
+select
+count(*)
+from pipeline_case
+where pipeline_def_id = #pipeline_def_id# and status = 'on-going'
+
+</select>
+
+
+<select id="getPipelineCaseJsonByPiplineCaseId" parameterClass="java.lang.Integer" resultClass="java.lang.String">
+
+select
+pipeline_case_json
+from pipeline_case
+where id = #PipelineCaseId#
+
+</select>
+
+
+
+<select id="getPiplinecaseByPdefAndStatus" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_case
+where pipeline_def_id = #pipeline_def_id# and status = 'on-going'
+
+</select>
+
+<select id="getPipelineCaseById" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_case
+where id = #pipeline_case_id#
+
+</select>
+
+<update id="updatePipeLineCase" parameterClass="com.sina.scm.data.DO.PiplineCase">
+update
+pipeline_case
+set
+status = #status#,end_time=#end_time#,pipeline_case_json=#pipeline_case_json#
+where 
+id = #id#
+</update>
+
+<select id="getFailPiplineByModuleId" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+select
+count(*)
+from pipeline_case
+where module_id = #module_id# and status = 'fail' 
+
+<dynamic >
+<isNotEmpty prepend="and " property="start_time">
+<![CDATA[
+        start_time>= #start_time#
+    ]]>
+</isNotEmpty>
+<isNotEmpty prepend=" and " property="end_time"> 
+<![CDATA[
+        start_time<= #end_time#
+    ]]>
+</isNotEmpty> 
+</dynamic>
+
+</select>
+<select id="getFailPiplineByModuleIdAndTime" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+select
+count(*)
+from pipeline_case
+where module_id = #module_id# and status = 'fail' and start_time between $start_time$ and $end_time$
+</select>
+
+<select id="getAllPiplineByModuleIdAndTime" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+
+select
+count(*)
+from pipeline_case
+where module_id = #module_id# and start_time between $start_time$ and $end_time$
+</select>
+
+<select id="getAllPiplineByModuleId" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+
+select
+count(*)
+from pipeline_case
+where module_id = #module_id# 
+<dynamic >
+
+<isNotEmpty prepend=" and " property="start_time">
+<![CDATA[
+        start_time>= #start_time#
+    ]]>
+</isNotEmpty> 
+<isNotEmpty prepend=" and " property="start_time">
+<![CDATA[
+        start_time<= #end_time#
+    ]]>
+</isNotEmpty> 
+
+</dynamic>
+
+</select>
+
+
+
+<select id="getLastPiplinecaseByPdef" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_case
+where module_id = #module_id# order by start_time desc limit 1
+
+</select>
+
+<update id="updateReleasePackageUrlByPipelineCaseId" parameterClass="com.sina.scm.data.DO.PiplineCase">
+update
+pipeline_case
+set
+release_package_url = #release_package_url#
+where 
+id = #id#
+</update>
+
+<select id="getRunningPiplineCaseCount" resultClass="java.lang.Integer">
+
+select
+count(pipeline_def_id)
+from pipeline_case
+where status = 'on-going'
+
+</select>
+
+<select id="getRunningPiplineDefId" resultClass="java.lang.Integer">
+
+select
+distinct(pipeline_def_id)
+from pipeline_case
+where status = 'on-going'
+limit #start#,#end#
+
+</select>
+
+<select id="getAllPiplinecaseByModuleId" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_case
+where module_id = #module_id# 
+and status != 'on-going'
+order by end_time desc
+
+</select>
+
+<select id="getAllPiplinecaseByModuleIdCount" resultClass="java.lang.Integer"  parameterClass="java.lang.Integer">
+
+select
+count(*)
+from pipeline_case
+where module_id = #module_id#
+
+</select>
+
+<update id="updatePreviewIplistById" parameterClass="java.util.Map">
+
+update pipeline_case set preview_iplist = #preview_iplist# where id = #id#
+
+</update>
+
+<select id="getAllSucessHistoryVersionByModuleId" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_case
+where module_id = #module_id# 
+and status = 'success'
+order by end_time desc
+
+</select>
+
+<select id="getOneSucessHistoryVersionByModuleId" parameterClass="java.util.Map" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_case
+where module_id = #module_id# 
+and version = #version#
+and status = 'success'
+
+</select>
+
+<update id="updateReleaseVersionByPipelineCaseId" parameterClass="com.sina.scm.data.DO.PiplineCase">
+update
+pipeline_case
+set
+is_release_version = 1
+where 
+id = #id#
+</update>
+
+<select id="getAllPiplinecaseByPdef" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_case
+where pipeline_def_id = #pipeline_def_id#
+
+</select>
+
+<select id="getAllPiplinecaseBypdfId" parameterClass="java.util.Map" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_case
+where pipeline_def_id = #pipeline_def_id# 
+and status != 'on-going'
+order by id desc
+limit #start#,#end#
+
+</select>
+
+<select id="getRunningPiplineCaseCountByName" resultClass="java.lang.Integer">
+
+select
+count(pipeline_def_id)
+from pipeline_case
+where status = 'on-going'
+and name like concat('%', #name#, '%')
+
+</select>
+
+<update id="updatePreviewAutotestResultUrlById" parameterClass="java.util.Map">
+
+update pipeline_case set preview_autotest_result_url = #preview_autotest_result_url# where id = #id#
+
+</update>
+
+</sqlMap>

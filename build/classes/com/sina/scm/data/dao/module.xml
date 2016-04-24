@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="module">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.DO.Module">
+		<result column="id" property="id" />
+		<result column="product_id" property="product_id" />
+		<result column="name" property="name" />
+		<result column="code_type" property="code_type" />
+		<result column="status" property="status" />
+		<result column="create_date" property="create_date" />
+		<result column="module_owner" property="module_owner" />
+		<result column="qa_owner" property="qa_owner" />
+		<result column="op_owner" property="op_owner" />
+		<result column="bu_owner" property="bu_owner" />
+		<result column="depends_on_id" property="depends_on_id" />
+		<result column="scm_info_id" property="scm_info_id" />
+		<result column="push_list" property="push_list" />
+		<result column="url_online" property="url_online" />
+		<result column="pipeline_def_id" property="pipeline_def_id" />
+		<result column="current_online_version" property="current_online_version" />
+		<result column="qb_job_def_url" property="qb_job_def_url" />
+		<result column="dev_list" property="dev_list" />
+		<result column="preview_url" property="preview_url" />
+		<result column="push_name" property="push_name" />
+		<result column="urgent_release_approver" property="urgent_release_approver" />
+		<result column="release_follower" property="release_follower" />
+		<result column="version_prefix" property="version_prefix" />
+		<result column="preview_depends" property="preview_depends" />
+		<result column="update_version_time" property="update_version_time" />
+</resultMap>
+
+<sql id="Base_Column_List">
+
+id,product_id,name,code_type,status,create_date,module_owner,qa_owner,op_owner,bu_owner,depends_on_id,
+scm_info_id,push_list,url_online,pipeline_def_id,current_online_version,qb_job_def_url,dev_list,
+preview_url,push_name,urgent_release_approver,release_follower,version_prefix,preview_depends,update_version_time
+		
+</sql>
+
+<insert id="insert" parameterClass="com.sina.scm.data.DO.Module">
+		insert
+		into
+		module(id,product_id,name,code_type,status,create_date,module_owner,qa_owner,op_owner,bu_owner,depends_on_id,
+scm_info_id,push_list,url_online,pipeline_def_id,current_online_version,qb_job_def_url,dev_list,
+preview_url,push_name,urgent_release_approver,release_follower,version_prefix,preview_depends,update_version_time)
+		values(#id#,#product_id#,#name#,#code_type#,#status#,#create_date#,#module_owner#,#qa_owner#,#op_owner#,#bu_owner#,#depends_on_id#,
+#scm_info_id#,#push_list#,#url_online#,#pipeline_def_id#,#current_online_version#,#qb_job_def_url#,#dev_list#,
+#preview_url#,#push_name#,#urgent_release_approver#,#release_follower#,#version_prefix#,#preview_depends#,#update_version_time#)
+		<selectKey resultClass="java.lang.Integer">
+			select last_insert_id() as id
+		</selectKey>
+</insert>
+
+<select id="getPushNameNum" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+
+SELECT count(push_list) from scm_platform.module where 
+(push_list = #pushName# ) or 
+(push_list like concat (#pushName_fenhao#, '%')) or 
+(push_list like concat('%', #fenhao_pushName_fenhao#, '%')) or 
+(push_list like concat('%',#fenhao_pushName#))
+</select>
+
+<update id="updateModuleOnlineVersion" parameterClass="java.util.Map">
+
+update scm_platform.module set current_online_version = #current_online_version#,update_version_time=#update_version_time#
+where id = #id#
+
+</update>
+
+<select id="getModuleId" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+
+SELECT id from scm_platform.module where 
+(push_list = #pushName# ) or 
+(push_list like concat (#pushName_fenhao#, '%')) or 
+(push_list like concat('%', #fenhao_pushName_fenhao#, '%')) or 
+(push_list like concat('%',#fenhao_pushName#))
+
+</select>
+
+<select id="getIdbyVersionIsNull" resultClass="java.lang.Integer">
+
+select id from module where current_online_version is null
+
+</select>
+
+<select id="getIdbyVersionIsNotNull" resultMap="BaseResultMap">
+
+select 
+<include refid="Base_Column_List" />
+from module where current_online_version != ''
+
+</select>
+
+<select id="getModuleCurrentVerison" parameterClass="java.util.Map" resultClass="java.lang.String">
+
+SELECT current_online_version from scm_platform.module where 
+(push_list = #pushName# ) or 
+(push_list like concat (#pushName_fenhao#, '%')) or 
+(push_list like concat('%', #fenhao_pushName_fenhao#, '%')) or 
+(push_list like concat('%',#fenhao_pushName#))
+
+</select>
+
+<select id="getModuleById" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from module
+where id = #moduleId# and status = 'online'
+
+</select>
+
+<select id="getModuleCount" resultClass="java.lang.Integer" parameterClass="java.lang.String">
+
+select
+count(*)
+from module
+where current_online_version != ''
+and
+name like concat('%', #name#, '%')
+
+
+</select>
+
+<select id="getAllModule" parameterClass="java.util.Map" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from module
+where current_online_version != ''
+<isNotEmpty property="name" prepend="AND" >	     
+name like concat('%', #name#, '%')
+</isNotEmpty>
+order by update_version_time desc
+limit #start#,#end#
+
+</select>
+
+<select id="getModuleByName" parameterClass="java.lang.String" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from module
+where name = #name# and status = 'online'
+
+</select>
+
+<update id="updateModule" parameterClass="java.util.Map">
+
+update scm_platform.module set name = #name#,version_prefix=#version_prefix#,module_owner = #module_owner#
+where id = #id#
+
+</update>
+
+<update id="updateModuleToScmId" parameterClass="java.util.Map">
+
+update scm_platform.module set scm_info_id = #scm_info_id#
+where id = #id#
+
+</update>
+
+<select id="getAllModuleCount" resultClass="java.lang.Integer" parameterClass="java.lang.String">
+
+select
+count(*)
+from module
+where name like concat('%', #name#, '%')
+
+</select>
+
+<select id="getIsAllModule" parameterClass="java.util.Map" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from module
+where 1 =1 
+<isNotEmpty property="name" prepend="AND" >	     
+name like concat('%', #name#, '%')
+</isNotEmpty>
+order by update_version_time desc
+limit #start#,#end#
+
+</select>
+
+<update id="updateModule1" parameterClass="com.sina.scm.data.DO.Module">
+update
+module
+set
+code_type = #code_type#,
+module_owner = #module_owner#,
+url_online = #url_online#,
+qb_job_def_url = #qb_job_def_url#
+where 
+name = #name#
+</update>
+
+<select id="getProductLine" resultClass="com.sina.scm.data.DO.ProductLine">
+
+select id,name,status
+from product_line
+where status = 'online'
+
+</select>
+
+</sqlMap>

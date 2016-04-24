@@ -1,0 +1,5 @@
+[ mail setup ]
+default_to_address=jintao3
+smtp_server=
+from_address=jintao3
+ccto=jintao3

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="rollback">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.vo.RollBack">
+		<result column="id" property="id" />
+		<result column="module_id" property="module_id" />
+		<result column="from_version" property="from_version" />
+		<result column="to_version" property="to_version" />
+		<result column="qb_job_url" property="qb_job_url" />
+		<result column="operator" property="operator" />
+		<result column="jenkins_job_url" property="jenkins_job_url" />
+		<result column="rollback_date" property="rollback_date" />
+		<result column="rollback_reason" property="rollback_reason" />
+		<result column="rca" property="rca" />
+</resultMap>
+
+<sql id="Base_Column_List">
+
+id,module_id,from_version,to_version,qb_job_url,operator,jenkins_job_url,rollback_date,rollback_reason,rca
+
+</sql>
+
+<insert id="insert" parameterClass="com.sina.scm.data.vo.RollBack">
+		insert
+		into
+		rollback(id,module_id,from_version,to_version,qb_job_url,operator,rollback_date)
+		values
+		(#id#,#module_id#,#from_version#,#to_version#,#qb_job_url#,#operator#,#rollback_date#)
+		<selectKey resultClass="java.lang.Integer">
+			select last_insert_id() as id
+		</selectKey>
+</insert>
+
+<select id="getQbJobUrlNum" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+
+select count(qb_job_url) from rollback where qb_job_url = #qb_job_url#
+
+</select>
+
+<select id="getRollBackNumByDay" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+
+select count(*) from rollback where rollback_date like concat (#rollback_date#, '%')
+
+</select>
+
+<select id="getRollBackByToVersion" parameterClass="java.lang.String" resultClass="com.sina.scm.data.vo.RollBack">
+
+select
+<include refid="Base_Column_List" />
+from rollback
+where to_version = #to_version#
+order by rollback_date desc limit 1
+
+</select>
+
+<select id="releaseAndRollBackNum" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+
+select count(*) from rollback where rollback_date like  concat (#year#, '%')
+
+</select>
+
+<select id="releaseAndRollBackNumBymoduleId" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+
+select count(*) from rollback where rollback_date like  concat (#rollback_date#, '%') and module_id = #module_id#
+
+</select>
+
+
+</sqlMap>

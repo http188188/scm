@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="piplineDef">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.DO.PiplineDef">
+		<result column="id" property="id" />
+		<result column="pipeline_type" property="pipeline_type" />
+		<result column="module_id" property="module_id" />
+		<result column="status" property="status" />
+		<result column="pipeline_json" property="pipeline_json" />
+		<result column="package_type" property="package_type" />
+		<result column="pipeline_owner" property="pipeline_owner" />
+		<result column="name" property="name" />
+		<result column="deploy_type1" property="deploy_type1" />
+		<result column="module_version" property="module_version" />
+		<result column="is_template" property="is_template" />
+		<result column="rollback_pipeline_def_id" property="rollback_pipeline_def_id" />
+</resultMap>
+
+<sql id="Base_Column_List">
+
+id,pipeline_type,module_id,status,pipeline_json,package_type,pipeline_owner,name,deploy_type1,module_version,is_template,rollback_pipeline_def_id
+		
+</sql>
+
+<insert id="insert" parameterClass="com.sina.scm.data.DO.PiplineDef">
+		insert
+		into
+		pipeline_def(id,pipeline_type,module_id,status,pipeline_json,package_type,pipeline_owner,name,deploy_type1,module_version,rollback_pipeline_def_id)
+		values(#id#,#pipeline_type#,#module_id#,#status#,#pipeline_json#,#package_type#,#pipeline_owner#,#name#,#deploy_type1#,#module_version#,#rollback_pipeline_def_id#)
+		<selectKey resultClass="java.lang.Integer">
+			select last_insert_id() as id
+		</selectKey>
+</insert>
+
+
+<select id="getAllModuleIds" resultClass="java.lang.Integer">
+
+select distinct(module_id) from pipeline_def where status = 'online'
+
+</select>
+
+
+<select id="getTemplateList" parameterClass="java.lang.String" resultMap="BaseResultMap">
+select
+<include refid="Base_Column_List" />
+from pipeline_def
+where is_template = 'true'
+
+
+</select>
+
+
+<select id="getPiplineListByModuleId" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_def
+where module_id = #moduleId# and status = 'online'
+
+</select>
+
+<select id="getPiplineByDefId" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_def
+where id = #piplineDefId# and status = 'online'
+
+</select>
+
+<update id="updatePipelineJsonById" parameterClass="java.util.Map">
+
+update pipeline_def set pipeline_json = #pipelineJson# 
+where id = #piplineDefId# and status = 'online'
+
+</update>
+
+<select id="getAllReleaseList" resultMap="BaseResultMap" parameterClass="java.util.Map">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_def
+where status = 'online' 
+<isNotEmpty property="name" prepend="AND" >	     
+name like concat('%', #name#, '%')
+</isNotEmpty>
+order by name
+limit #start#,#end#
+</select>
+
+<select id="getAllReleaseCount" resultClass="java.lang.Integer" parameterClass="java.util.Map">
+
+select
+count(*)
+from pipeline_def
+where status = 'online'
+and name like concat('%', #name#, '%')
+
+</select>
+<select id="getAllReleaseCount3" resultClass="java.lang.Integer" parameterClass="java.util.Map">
+
+select
+count(*)
+from pipeline_def
+where status = 'online'
+and name=#name#
+
+</select>
+
+<select id="getPiplineByDefId1" parameterClass="java.util.Map" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_def
+where id = #piplineDefId# and status = 'online'
+and name like concat('%', #name#, '%')
+
+</select>
+
+<select id="getPiplineJsonByDefId" parameterClass="java.lang.Integer" resultClass="java.lang.String" >
+
+select
+pipeline_json
+from pipeline_def
+where id = #piplineDefId# and status = 'online'
+
+
+</select>
+
+<select id="getAllReleaseCount1" resultClass="java.lang.Integer" parameterClass="java.util.Map">
+
+select
+count(*)
+from pipeline_def
+where status = 'online'
+and id = #piplineDefId#
+and name=#name#
+
+</select>
+
+<select id="getAllReleaseCount2" resultClass="java.lang.Integer" parameterClass="java.util.Map">
+ 
+select
+count(*)
+from pipeline_def
+where status = 'online'
+and name like concat('%', #name#, '%')
+<isPropertyAvailable property="module_ids">  
+    <isNotEmpty property="module_ids" prepend=" and ">  
+        <iterate property="module_ids" conjunction="OR" close=")" open="(">  
+            module_id=#module_ids[]#  
+        </iterate>  
+    </isNotEmpty>        
+</isPropertyAvailable>
+
+</select>
+
+<select id="getAllReleaseList5" resultMap="BaseResultMap" parameterClass="java.util.Map">
+
+select
+<include refid="Base_Column_List" />
+from pipeline_def
+where status = 'online' 
+<isNotEmpty property="name" prepend="AND" >	     
+name like concat('%', #name#, '%')
+</isNotEmpty>
+<isPropertyAvailable property="module_ids">  
+    <isNotEmpty property="module_ids" prepend=" and ">  
+        <iterate property="module_ids" conjunction="OR" close=")" open="(">  
+            module_id=#module_ids[]#  
+        </iterate>  
+    </isNotEmpty>        
+</isPropertyAvailable>
+order by name
+limit #start#,#end#
+</select>
+
+<select id="getPiplineNameByModuleId" parameterClass="java.lang.Integer" resultClass="java.lang.String" >
+
+select
+distinct name
+from pipeline_def
+where  module_id= #module_id# and status = 'online'
+
+</select>
+</sqlMap>

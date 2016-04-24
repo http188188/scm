@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="nodeDef">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.DO.NodeDef">
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="type" property="type" />
+		<result column="job_url" property="job_url" />
+		<result column="parameter" property="parameter" />
+		<result column="job_token" property="job_token" />
+		<result column="action_mail_list" property="action_mail_list" />
+		<result column="notification_mail_list" property="notification_mail_list" />
+</resultMap>
+
+<sql id="Base_Column_List">
+id,name,type,job_url,parameter,job_token,action_mail_list,notification_mail_list
+</sql>
+
+<insert id="insert" parameterClass="com.sina.scm.data.DO.NodeDef">
+		insert
+		into
+		node_def(id,name,type,job_url,parameter,job_token,action_mail_list,notification_mail_list)
+		values(#id#,#name#,#type#,#job_url#,#parameter#,#job_token#,#action_mail_list#,#notification_mail_list#)
+		<selectKey resultClass="java.lang.Integer">
+			select last_insert_id() as id
+		</selectKey>
+</insert>
+
+
+<select id="getNodeDefById" resultClass="com.sina.scm.data.DO.NodeDef" parameterClass="java.lang.Integer">
+
+select
+<include refid="Base_Column_List"/>
+from node_def
+where id = #node_def_id#
+
+</select>
+
+</sqlMap>

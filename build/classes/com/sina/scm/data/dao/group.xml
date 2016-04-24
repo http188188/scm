@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="group">
+<resultMap id="BaseResultMap" class="com.sina.scm.data.vo.Group">
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="module_id" property="module_id" />
+		<result column="status" property="status" />
+		<result column="comment" property="comment" />
+</resultMap>
+
+<sql id="Base_Column_List">
+id,name,module_id,status,comment
+</sql>
+
+<select id="getGrooupByModuleId" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from scm_platform.group
+where module_id = #module_id#
+
+</select>
+
+<select id="getGroupByNameAndModuleId" parameterClass="java.util.Map" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from scm_platform.group
+where module_id = #module_id#
+and name = #name#
+
+</select>
+
+<select id="getGroupById" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+
+select
+<include refid="Base_Column_List" />
+from scm_platform.group
+where id = #id#
+
+</select>
+<insert id="insert" parameterClass="com.sina.scm.data.vo.Group">
+		insert
+		into
+		scm_platform.group(id,name,module_id,status,comment)
+		values(#id#,#name#,#module_id#,#status#,#comment#)
+		<selectKey resultClass="java.lang.Integer">
+			select last_insert_id() as id
+		</selectKey>
+</insert>
+
+<delete id="deleteGroup" parameterClass="java.util.Map">
+
+delete from  scm_platform.group where name =#name# and module_id=#module_id#
+
+
+</delete>
+</sqlMap>
